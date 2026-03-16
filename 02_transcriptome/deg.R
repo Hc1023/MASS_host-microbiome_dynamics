@@ -274,14 +274,14 @@ resgo_D1 = plot_fun(res_D1)
 resgo_D4 = plot_fun(res_D4)
 resgo_D7 = plot_fun(res_D7)
 
-pdf(paste0("Outputs/2_DE.pdf"), width = 4.5, height = 5)
+pdf(paste0("Outputs/02_DE.pdf"), width = 4.5, height = 5)
 print(resgo_D1[[2]])
 print(resgo_D4[[2]])
 print(resgo_D7[[2]])
 print(resgo_Overall[[2]])
 dev.off()
 
-pdf(paste0("Outputs/2_DEGO.pdf"), width = 6.5, height = 5)
+pdf(paste0("Outputs/02_DEGO.pdf"), width = 6.5, height = 5)
 print(resgo_D1[[3]])
 print(resgo_D4[[3]])
 print(resgo_D7[[3]])
@@ -402,7 +402,7 @@ p +
   ) -> p2
 
 
-pdf(paste0("Outputs/2_DE_selected_genes.pdf"), width = 6, height = 2)
+pdf(paste0("Outputs/02_DE_selected_genes.pdf"), width = 6, height = 2)
 print(p2)
 dev.off()
 
