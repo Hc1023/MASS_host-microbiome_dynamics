@@ -14,7 +14,6 @@ library(ggpubr)
 load('Inputs/1211_metadata.rdata')
 load('Inputs/1211_transcriptome.rdata')
 
-
 metadata_analysis = df_long %>% 
   filter(Timepoint %in% c('D1','D4','D7')) %>%
   droplevels()
@@ -86,11 +85,41 @@ res_Dyn41 <- topTable(fit2, coef="Dyn_D4vsD1", number=Inf, adjust.method="BH")
 res_Dyn71 <- topTable(fit2, coef="Dyn_D7vsD1", number=Inf, adjust.method="BH")
 res_Overall <- topTable(fit2, coef="Overall", number=Inf, adjust.method="BH")
 
-head(res_Dyn41)
-head(res_Dyn71)
+# write files
+if(F){
+  library(openxlsx)
+  
+  # put results into a list
+  res_list <- list(
+    D1 = res_D1,
+    D4 = res_D4,
+    D7 = res_D7,
+    Dyn_D4vsD1 = res_Dyn41,
+    Dyn_D7vsD1 = res_Dyn71,
+    Overall = res_Overall
+  )
+  
+  
+  add_gene <- function(x){
+    x %<>% rownames_to_column()
+  }
+  
+  add_symbol <- function(x){
+    x$gene_symbol <- gene_attr[rownames(x),"SYMBOL"]
+    x
+  }
+  
+  res_list <- lapply(res_list, add_symbol)
+  res_list <- lapply(res_list, add_gene)
+  
+  # write to excel
+  write.xlsx(
+    res_list,
+    file = "Outputs/Supplementary_data_DE.xlsx",
+    asTable = TRUE
+  )
+}
 
-res = res_Overall
-res = res_D7
 plot_fun = function(res){
   res <- res[order(res$adj.P.Val, decreasing = F), ]
   res$gene_name <- as.character(gene_attr[rownames(res),'SYMBOL'])
@@ -218,6 +247,16 @@ plot_fun = function(res){
       geom_vline(xintercept = -thr, linetype = "dashed", alpha = 0.5)
     
     }
+  
+  # write files
+  if(T){
+    df_ego_up = data.frame(ego_up)
+    df_ego_down = data.frame(ego_down)
+    if(nrow(df_ego_up)>0) df_ego_up$Direction = 'Mortality'
+    if(nrow(df_ego_down)>0) df_ego_down$Direction = 'Survival'
+    df_ego = bind_rows(df_ego_up, df_ego_down)
+  }
+  
   if(F){
     plist_res_overall = list()
     plist_res_overall[[1]] = p; plist_res_overall[[2]] = p2;
@@ -226,24 +265,48 @@ plot_fun = function(res){
     plist3 = list(p,p2)
     
   }
-  return(list(p, p2))
+  return(list(df_ego, p, p2))
   
 }  
 
+resgo_Overall = plot_fun(res_Overall)
+resgo_D1 = plot_fun(res_D1)
+resgo_D4 = plot_fun(res_D4)
+resgo_D7 = plot_fun(res_D7)
 
-pdf(paste0("Outputs/1215_DE.pdf"), width = 4.5, height = 5)
-print(plist1[[1]])
-print(plist2[[1]])
-print(plist3[[1]])
-print(plist_res_overall[[1]])
+pdf(paste0("Outputs/2_DE.pdf"), width = 4.5, height = 5)
+print(resgo_D1[[2]])
+print(resgo_D4[[2]])
+print(resgo_D7[[2]])
+print(resgo_Overall[[2]])
 dev.off()
 
-pdf(paste0("Outputs/1215_DEGO.pdf"), width = 8, height = 5)
-print(plist1[[2]])
-print(plist2[[2]])
-print(plist3[[2]])
-print(plist_res_overall[[2]])
+pdf(paste0("Outputs/2_DEGO.pdf"), width = 6.5, height = 5)
+print(resgo_D1[[3]])
+print(resgo_D4[[3]])
+print(resgo_D7[[3]])
+print(resgo_Overall[[3]])
 dev.off()
+
+# write files
+if(F){
+  library(openxlsx)
+  
+  # put results into a list
+  res_list <- list(
+    D1 = resgo_D1[[1]],
+    D4 = resgo_D4[[1]],
+    D7 = resgo_D7[[1]],
+    Overall = resgo_Overall[[1]]
+  )
+
+  # write to excel
+  write.xlsx(
+    res_list,
+    file = "Outputs/Supplementary_data_DEGO.xlsx",
+    asTable = TRUE
+  )
+}
 
 
 #### 展现selected genes ####
@@ -339,7 +402,7 @@ p +
   ) -> p2
 
 
-pdf(paste0("Outputs/1221_DE_selected_genes.pdf"), width = 6, height = 2)
+pdf(paste0("Outputs/2_DE_selected_genes.pdf"), width = 6, height = 2)
 print(p2)
 dev.off()
 
