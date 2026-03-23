@@ -67,6 +67,8 @@ myplot = function(d){
   # 添加标记列
   results <- results %>%
     mutate(sig_label = case_when(
+      P_value < 0.001 ~ "***",
+      P_value < 0.01 ~ "**",
       P_value < 0.05 ~ "*",
       P_value < 0.1 ~ ".",
       TRUE ~ ""
@@ -81,7 +83,7 @@ myplot = function(d){
   annot_df <- max_y %>%
     left_join(results %>% select(Pathogen, sig_label), by = "Pathogen")
   
-  annot_df$max_y = ifelse(annot_df$sig_label == '*',
+  annot_df$max_y = ifelse(annot_df$sig_label %in% c("*","**","***"), 
                           annot_df$max_y * 0.9,
                           annot_df$max_y * 1.1)
   

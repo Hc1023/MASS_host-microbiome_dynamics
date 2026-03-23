@@ -33,6 +33,7 @@ colnames(df2)[3:20] = c('C4','C3','IgM','IgG','IgA','IL2','IL4','IL6',
 
 df2$CD4CD8ratio = df2$CD3CD4T/df2$CD3CD8T
 
+
 experiment_df = read.csv('../../AI_MASS/MASS_metadata_database_20250607/6.Experiment_info.csv')
 df2 %<>% left_join(experiment_df %>% dplyr::select(HumanID, hsCRP, LymphocyteCount), by = 'HumanID')
 
