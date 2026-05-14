@@ -38,7 +38,6 @@ Basic cohort characterization and summary statistics.
 
 * `overview.R` – cohort description and visualization
 * `table1.R` – clinical summary table
-* `write_data.R` – data preprocessing / export
 
 ---
 
@@ -75,8 +74,6 @@ Representative scripts:
 * `microbe_mortality_association*.R`
 * `microbe_trans_cor.R`
 * `mediation.R`, `mediation_d.R`
-* `survival analysis.R`
-* `Spearman.R`
 
 ---
 
@@ -103,7 +100,6 @@ Representative scripts:
 * `CTS.R`, `CTS genes.R`
 * `CTSdyn microbe.R`
 * `auc_*` (model evaluation and comparison)
-* `forest.R`
 
 ---
 
