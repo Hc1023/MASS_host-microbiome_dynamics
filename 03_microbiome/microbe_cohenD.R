@@ -5,13 +5,13 @@ library(rstatix)
 library(stringr)
 library(ggplot2)
 
-load('Inputs/1315_meta_model.rdata')
+load('Inputs/1616_meta_model.rdata')
 
 tmp = names(meta_model)
 tmp = tmp[grepl('D1_mi_', tmp)]
 tmp = gsub('D1_mi_', '', tmp)
-pathogen_virus = tmp[12:21]
-pathogen_bacf = tmp[1:11]
+pathogen_virus = tmp[11:20]
+pathogen_bacf = tmp[1:10]
 
 df = meta_model %>% dplyr::select(Mortality28d, matches("D[147]_mi_"))
 

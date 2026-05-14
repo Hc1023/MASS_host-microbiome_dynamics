@@ -4,7 +4,7 @@ library(gtsummary)
 library(gt)
 library(openxlsx)
 
-load('Inputs/1315_meta_model.rdata')
+load('Inputs/1616_meta_model.rdata')
 df1 = meta_model
 
 vars = c('Age', 'Gender', 

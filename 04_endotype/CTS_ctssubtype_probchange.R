@@ -3,7 +3,7 @@ library(tidyverse)
 library(magrittr)
 library(data.table)
 
-load('Inputs/1315_meta_model.rdata')
+load('Inputs/1616_meta_model.rdata')
 
 meta_analysis = meta_model %>% filter(!is.na(D1) & !is.na(D4.death) & !is.na(D7.death))
 meta_analysis %<>% dplyr::select(HumanID, Mortality28d, matches("CTS"))

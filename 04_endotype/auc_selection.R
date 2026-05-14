@@ -3,7 +3,7 @@ library(tidyverse)
 library(magrittr)
 library(data.table)
 
-load('Inputs/1315_meta_model.rdata')
+load('Inputs/1616_meta_model.rdata')
 sel_cts = read.csv('Outputs/Supplementary_data_selection_ctsg.csv')
 sel_mi = read.csv('Outputs/Supplementary_data_selection_microbe.csv')
 

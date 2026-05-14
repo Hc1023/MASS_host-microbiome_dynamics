@@ -7,7 +7,7 @@ library(ggplot2)
 library(pheatmap)
 library(aplot)
 
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 load('Inputs/1211_metadata.rdata')
 
 df_long = df_long %>% 

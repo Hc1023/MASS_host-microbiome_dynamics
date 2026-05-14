@@ -7,8 +7,8 @@ library(ggplot2)
 library(stringr)
 library(forcats)
 
-load('Inputs/1315_meta_model.rdata')
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_meta_model.rdata')
+load('Inputs/1616_microbe.rdata')
 # microbe: log2 transformed mass
 
 ## logistic-----

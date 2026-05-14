@@ -7,7 +7,7 @@ library(edgeR)
 
 load('Inputs/1211_metadata.rdata')
 load('Inputs/1211_transcriptome.rdata')
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 
 # new_expr_data must be a data.frame or matrix
 # First column = gene identifiers (optional), rownames = Ensembl IDs

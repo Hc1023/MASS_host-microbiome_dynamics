@@ -2,16 +2,25 @@ rm(list = ls())
 library(tidyverse)
 library(magrittr)
 library(data.table)
-
-load('Inputs/1315_meta_model.rdata')
+library(ggpubr)
+library(e1071)    # SVM 模型
+library(caret)    # 数据切分 + 评价
+library(pROC)     # ROC AUC
+library(glmnet)
+library(pheatmap)
+library(RColorBrewer)
+library(edgeR)
+library(ConsensusTranscriptomicSubtype)
+library("SepstratifieR")
+library(ComplexHeatmap)
+library(circlize)
+load('Inputs/1616_meta_model.rdata')
 
 #### selection prob heatmap ####
 
 ## heatmap
 
-library(edgeR)
-library(ConsensusTranscriptomicSubtype)
-library("SepstratifieR")
+
 
 load('Inputs/1211_metadata.rdata')
 load('Inputs/1211_transcriptome.rdata')
@@ -78,8 +87,7 @@ rn = c(
 
 new_mat_ord = new_mat_ord[rn,]
 
-library(pheatmap)
-library(RColorBrewer)
+
 
 pheatmap(
   new_mat_ord,
@@ -97,11 +105,7 @@ pheatmap(
 
 ## sel_CTSg for mortality28d D1/4/7
 # run pre_fun function
-library(ggpubr)
-library(e1071)    # SVM 模型
-library(caret)    # 数据切分 + 评价
-library(pROC)     # ROC AUC
-library(glmnet)
+
 ## varialble selection 
 ### CTSg
 selfun = function(d = "D1"){
@@ -133,8 +137,7 @@ freq_row <- seldf_all[,-1] %>%
   .[rownames(new_mat_ord), , drop = FALSE]
 
 
-library(ComplexHeatmap)
-library(circlize)
+
 
 # 1) freq 矩阵：确保是 numeric matrix，行顺序对齐 new_mat_ord
 freq_mat <- as.matrix(freq_row)   # 3 cols: D1 D4 D7
@@ -225,13 +228,14 @@ seldf_D1 = selfun(d = "D1")
 seldf_D4 = selfun(d = "D4")
 seldf_D7 = selfun(d = "D7")
 seldf_all = bind_cols(seldf_D1,seldf_D4$Freq, seldf_D7$Freq)
-
+rownames(seldf_all) = gsub('D1_mi2_','',rownames(seldf_all))
 colnames(seldf_all)[2:4] = paste0("D",c(1,4,7))
 seldf_all = seldf_all[,-1]
 freq_mat = as.matrix(seldf_all)
 rownames(freq_mat) = gsub('\\.','-',rownames(freq_mat))
 rownames(freq_mat)[rownames(freq_mat) == 'Influenza-A'] = 'Influenza A'
 rownames(freq_mat)[rownames(freq_mat) == 'HHV-4'] = 'EBV'
+rownames(freq_mat)[rownames(freq_mat) == 'Bacf'] = 'Bacteria/Fungi'
 col_freq <- colorRamp2(c(0, 1), c("white", "darkred"))
 
 ht_freq <- Heatmap(

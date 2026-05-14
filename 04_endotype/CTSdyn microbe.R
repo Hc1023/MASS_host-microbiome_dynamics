@@ -7,7 +7,7 @@ library(ggplot2)
 library(stringr)
 library(forcats)
 
-load('Inputs/1315_meta_model.rdata')
+load('Inputs/1616_meta_model.rdata')
 
 df1 = meta_model %>% dplyr::select(HumanID, Mortality28d, D1_CTS, D4_CTS, D7_CTS)
 df1 %<>% na.omit()
@@ -179,6 +179,7 @@ bubble_df <- bubble_df %>%
 
 levels(bubble_df$feature)[levels(bubble_df$feature) == "HHV.4"] <- "EBV"
 levels(bubble_df$feature)[levels(bubble_df$feature) == "Influenza.A"] <- "Influenza A"
+
 levels(bubble_df$feature)[levels(bubble_df$feature) == "Bacf"] <- "Bacteria/Fungi"
 
 p = ggplot(bubble_df, aes(x = grp, y = feature)) +

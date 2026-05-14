@@ -7,7 +7,7 @@ library(scales)
 library(edgeR) 
 
 load('Inputs/1211_metadata.rdata')
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 load('Inputs/1211_transcriptome.rdata')
 geneID = setNames(gene_attr$SYMBOL, gene_attr$gene_id)
 
@@ -58,6 +58,57 @@ res_list <- lapply(pathogen_vars, function(p) {
 })
 
 res_pathogen <- do.call(rbind, res_list)
+
+### Summarize the global microbe-host transcriptional association landscape
+microbe_type <- tibble(
+  Pathogen = make.names(names(mapid_vec)),
+  Microbe = names(mapid_vec),
+  Kingdom = unname(mapid_vec)
+) %>%
+  filter(Pathogen %in% pathogen_vars) %>%
+  mutate(Display = ifelse(Pathogen == "HHV.4", "EBV", Microbe))
+
+landscape_summary <- res_pathogen %>%
+  group_by(Pathogen) %>%
+  summarise(
+    Positive_genes = sum(adj.P.Val < 0.05 & logFC > 0, na.rm = TRUE),
+    Negative_genes = sum(adj.P.Val < 0.05 & logFC < 0, na.rm = TRUE),
+    Significant_genes = sum(adj.P.Val < 0.05, na.rm = TRUE),
+    Min_FDR = min(adj.P.Val, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  left_join(microbe_type, by = "Pathogen") %>%
+  arrange(Kingdom, Min_FDR)
+
+write.csv(
+  landscape_summary,
+  "Outputs/microbe_trans_landscape_summary.csv",
+  row.names = FALSE
+)
+
+landscape_plot_df <- landscape_summary %>%
+  mutate(
+    Display = factor(Display, levels = Display[order(Significant_genes)]),
+    Has_signal = Significant_genes > 0
+  )
+
+p_landscape <- ggplot(
+  landscape_plot_df,
+  aes(x = Display, y = Significant_genes, fill = Kingdom, alpha = Has_signal)
+) +
+  geom_col(width = 0.7) +
+  coord_flip() +
+  scale_alpha_manual(values = c("FALSE" = 0.35, "TRUE" = 1), guide = "none") +
+  labs(x = "", y = "Host genes associated with microbe abundance (FDR < 0.05)") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+ggsave(
+  "Outputs/03_microbe_trans_landscape.pdf",
+  p_landscape,
+  width = 4.8,
+  height = 3.4
+)
 
 if(F){
   res_out = res_pathogen %>%
@@ -203,7 +254,6 @@ pdf(paste0("Outputs/03_microbe_trans_GO.pdf"), width = 5.5, height = 4.3)
 print(p3_list[[1]])
 print(p3_list[[2]])
 dev.off()
-
 
 
 

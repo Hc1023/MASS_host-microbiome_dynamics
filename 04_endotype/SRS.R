@@ -7,7 +7,7 @@ library("SepstratifieR")
 
 load('Inputs/1211_metadata.rdata')
 load('Inputs/1211_transcriptome.rdata')
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 
 dge <- DGEList(counts)
 dge <- calcNormFactors(dge)

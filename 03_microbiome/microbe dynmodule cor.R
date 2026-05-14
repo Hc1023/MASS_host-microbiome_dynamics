@@ -29,9 +29,9 @@ meta_gsva = metadata_analysis %>% dplyr::select(HumanID,Timepoint,SampleID,Morta
 
 #### microbe module cor ####
 # load('Inputs/1315_module.rdata')
-gsva_mat = read.csv('Outputs/Supplementary_data_module_gsva.csv',
+gsva_mat = read.csv('Outputs/Supplementary_data_6_module_gsva.csv',
                      row.names = 1)
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 data_filtered = data[rowSums(data>0) > 0.05*ncol(data),]
 data_filtered = data_filtered[order(rowSums(data_filtered>0), decreasing = T),]
 data_filtered_log2 = log2(data_filtered+1)
@@ -45,6 +45,7 @@ rownames(data_filtered_log2) %<>% make.names()
 microbe_vars = rownames(data_filtered_log2)
 host_vars = c("up1", "up2", "up3", "dw1")
 microbe_vars[microbe_vars == 'HHV.4'] = 'EBV'
+
 colnames(dfmm)[colnames(dfmm) == 'HHV-4'] = 'EBV'
 cor_df <- expand.grid(
   host = host_vars,

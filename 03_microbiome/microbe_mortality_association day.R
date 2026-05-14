@@ -5,7 +5,7 @@ library(data.table)
 library(ggpubr)
 library(gridExtra)
 
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 load('Inputs/1211_metadata.rdata')
 {
   genus_sum2 = data

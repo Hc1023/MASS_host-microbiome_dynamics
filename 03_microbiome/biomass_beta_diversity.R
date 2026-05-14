@@ -7,7 +7,7 @@ library(vegan)
 library(aplot)
 
 load('Inputs/1211_metadata.rdata')
-load('Inputs/1211_microbe.rdata')
+load('Inputs/1616_microbe.rdata')
 
 #### beta diversity ####
 
@@ -57,15 +57,16 @@ plot_beta = function(data2, d, title_){
 
 data_log2 = log2(data+1)
 
+
 plist = list()
 for (d in c('D1','D4','D7')) {
   print(d)
   p1 = plot_beta(data2 = data_log2, 
                  d = d, title_ = 'Total')
   p2 = plot_beta(data2 = data_log2[mapid_vec[rownames(data_log2)] != 'Viruses',], 
-                 d = d, title_ = 'Bacteria/Fungi') + ylab('') 
+                 d = d, title_ = 'Bacteria/Fungi')
   p3 = plot_beta(data2 = data_log2[mapid_vec[rownames(data_log2)] == 'Viruses',], 
-                 d = d, title_ = 'Viruses') + ylab('') 
+                 d = d, title_ = 'Viruses')
   plist[[d]] = ggarrange(p1,p2,p3, ncol = 3, nrow = 1) 
 }
 
