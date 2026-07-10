@@ -3,6 +3,14 @@ library(tidyverse)
 library(magrittr)
 library(mediation)
 
+project_dir <- "/Users/huangsisi/workspace/MASS/sepsis_microbiome/MASS_host-microbiome_dynamics"
+setwd(project_dir)
+
+out_dir <- file.path(
+  "/Users/huangsisi/workspace/MASS/sepsis_microbiome/MASS_mortality-main/Outputs/260629_med"
+)
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
 # -------------------------
 # 1) 读入 + 构建 D1/D4 wide + delta
 # -------------------------
@@ -42,12 +50,13 @@ df_med <- df_wide %>%
 # -------------------------
 # 2) 协变量处理：factor -> dummy；连续变量 scale
 # -------------------------
-X <- "HCMV_D4"               # treat
+X <- "HCMV_D1"               # treat
 Y <- "Mortality28d"          # outcome
-modules <- c("up1_D4","up2_D4","up3_D4","dw1_D4")  # mediators (可替换成 d_up1... 等)
+modules <- c("d_up1","d_up2","d_up3","d_dw1")  # mediators (可替换成 d_up1... 等)
 
 covs_cat <- c("Gender","CenterGroup","PneumoniaTypeGroup","Immunosuppression","MV")
 covs_num <- c("Age","CCI","SOFA_24h")
+
 
 stopifnot(all(c(X, Y, modules, covs_cat, covs_num) %in% names(df_med)))
 
@@ -179,10 +188,10 @@ res_med <- bind_rows(s_list)
 # 5) 可选：加上更好看的模块名 + 显著性标记
 # -------------------------
 module_map <- c(
-  up1_D4 = "Inflammatory signaling",
-  up2_D4 = "Phagolysosome function",
-  up3_D4 = "IFN signaling",
-  dw1_D4 = "Ribosome biogenesis"
+  d_up1 = "Inflammatory signaling",
+  d_up2 = "Phagolysosome function",
+  d_up3 = "IFN signaling",
+  d_dw1 = "Ribosome biogenesis"
 )
 
 res_med <- res_med %>%
@@ -202,10 +211,24 @@ res_med <- res_med %>%
     c_ci      = sprintf("%.3f (OR=%.3f)", c_total, c_total_OR)
   )
 
+
+if(F){
+  module_map <- c(
+    d_up1 = "Inflammatory signaling",
+    d_up2 = "Phagolysosome function",
+    d_up3 = "IFN-1 signaling",
+    d_dw1 = "Ribosome biogenesis"
+  )
+  
+  res_med = read.csv(file.path(out_dir, "Supplementary_data_10b_med_delta.csv"))
+  
+}
+
+
 plot_df <- res_med %>%
   mutate(
     Module = factor(module_map[mediator],
-                    levels = rev(module_map[modules])),
+                    levels = rev(module_map[modules[c(1,3,2,4)]])),
     sig = case_when(
       ACME_p < 0.001 ~ "***",
       ACME_p < 0.01  ~ "**",
@@ -246,17 +269,17 @@ p_acme <- ggplot(plot_df, aes(x = ACME, y = Module)) +
     axis.text.y = element_text(size = 10),
     axis.text.x = element_text(size = 10),
     axis.title.x = element_text(size = 11)
-  ) +
-  scale_x_continuous(n.breaks = 3)
+  )
+
 
 p_acme
 
-pdf(file = 'Outputs/03_mediation.pdf', width = 3.3, height = 2)
+pdf(file = file.path(out_dir, "med_d.pdf"), 
+    width = 3.3, height = 2)
 print(p_acme)
 dev.off()
 
 if(F){
-  write.csv(res_med, 'Outputs/Supplementary_data_med.csv',
+  write.csv(res_med, 'Outputs/Supplementary_data_med_delta.csv',
             row.names = F)
 }
-

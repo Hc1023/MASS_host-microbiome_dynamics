@@ -13,6 +13,15 @@ library(stringr)
 library(ComplexHeatmap)
 library(circlize)
 
+
+project_dir <- "/Users/huangsisi/workspace/MASS/sepsis_microbiome/MASS_host-microbiome_dynamics"
+setwd(project_dir)
+
+out_dir <- file.path(
+  "/Users/huangsisi/workspace/MASS/sepsis_microbiome/MASS_mortality-main/Outputs/260701_deg_dyn"
+)
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
 load('Inputs/1211_metadata.rdata')
 load('Inputs/1211_transcriptome.rdata')
 
@@ -55,7 +64,7 @@ dge <- calcNormFactors(dge)
 v <- voom(dge, design, plot = FALSE)
 
 ## using the outputs in deg analysis
-sheets = sisiUtils::read_excel_allsheets('Outputs/Supplementary_data_DE.xlsx')
+sheets = sisiUtils::read_excel_allsheets('Outputs/Supplementary_data_1_4_DE.xlsx')
 res_Dyn41 = sheets[['Dyn_D4vsD1']]
 rownames(res_Dyn41) = res_Dyn41$rowname
 res_Dyn41 = res_Dyn41[,-1]
@@ -129,13 +138,13 @@ if(F){
   # put results into a list
   res_list <- list(
     gsea_Dyn41 = gsea_Dyn41[,-ncol(gsea_Dyn41)],
-    gsea_Dyn71 = gsea_Dyn41[,-ncol(gsea_Dyn71)]
+    gsea_Dyn71 = gsea_Dyn71[,-ncol(gsea_Dyn71)]
   )
   
   # write to excel
   write.xlsx(
     res_list,
-    file = "Outputs/Supplementary_data_GSEA_dynamics.xlsx",
+    file = file.path(out_dir, "Supplementary_data_GSEA_dynamics.xlsx"),
     asTable = TRUE
   )
 }
@@ -206,13 +215,6 @@ p2 <- plot_fgsea_bidir(gsea_Dyn71, top_n = 15,
 
 p1
 p2
-pdf(paste0("Outputs/02_DynGSEA_D4vsD1.pdf"), width = 7.3, height = 4.7)
-print(p1)
-dev.off()
-pdf(paste0("Outputs/02_DynGSEA_D7vsD1.pdf"), width = 8.1, height = 4.7)
-print(p2)
-dev.off()
-
 
 
 get_pos <- function(gsea_res, tp, padj_cut = 0.10) {
@@ -695,3 +697,53 @@ pdf(paste0("Outputs/02_Dyntraj.pdf"), width = 9, height = 2.2)
 print(p)
 dev.off()
 
+
+#### table output ####
+
+library(tidyverse)
+
+## input: gs_list
+## gs_list$up1, gs_list$up2, gs_list$up3, gs_list$dw1
+
+module_names <- c(
+  up1 = "Module1_PRR_TLR_TNF_NFkB",
+  up2 = "Module2_Phagolysosome_Autophagy",
+  up3 = "Module3_IFN_I_Response",
+  dw1 = "Module4_Ribosome_Biogenesis"
+)
+
+## clean gene lists, preserving original order
+gs_clean <- gs_list[names(module_names)] %>%
+  lapply(function(x) unique(na.omit(trimws(as.character(x)))))
+
+names(gs_clean) <- module_names[names(gs_clean)]
+
+## convert to wide-format table
+max_len <- max(lengths(gs_clean))
+
+module_gene_wide <- gs_clean %>%
+  lapply(function(x) {
+    length(x) <- max_len
+    x
+  }) %>%
+  as.data.frame(check.names = FALSE)
+
+## save
+write.csv(
+  module_gene_wide,
+  file = file.path(out_dir, "selected_genes_by_module_wide.csv"),
+  row.names = FALSE,
+  na = ""
+)
+library(ggVennDiagram)
+p_venn <- ggVennDiagram(gs_clean, label_alpha = 0) +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(
+    title = "Overlap of selected genes across modules",
+    fill = "Gene count"
+  ) 
+p_venn
+
+pdf(file.path(out_dir, "venn.pdf"), width = 5, height = 5)
+print(p_venn)
+dev.off()
