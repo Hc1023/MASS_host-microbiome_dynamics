@@ -1,0 +1,5 @@
+"Module_ID","NumDF","DenDF","F_value","interaction_p","n_samples","n_patients","singular_fit","interaction_fdr","Module","label"
+"M1",2,317.298318120665,4.08111044792141,0.017783181364778,481,183,FALSE,0.0711327254591119,"PRR/TLR/NF-kB signaling","Trajectory interaction FDR 0.071"
+"M2",2,316.680629288334,2.58323329543277,0.0771203791459174,481,183,FALSE,0.102827172194557,"Phagolysosomal/autophagy","Trajectory interaction FDR 0.103"
+"M3",2,317.646539268939,3.27107806561263,0.0392482484601415,481,183,FALSE,0.078496496920283,"Type I IFN response","Trajectory interaction FDR 0.078"
+"M4",2,314.239521377264,2.11849510671807,0.121926114649691,481,183,FALSE,0.121926114649691,"Ribosome biogenesis","Trajectory interaction FDR 0.122"
