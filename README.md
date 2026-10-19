@@ -1,6 +1,6 @@
 # Host–microbiome dynamics in the MASS cohort
 
-Analysis code and prepared inputs for the study **“Longitudinal host–microbe profiling reveals a transferable mortality signature in severe pneumonia.”** Analyses use MASS for discovery, CMAISE for external evaluation of host-response patterns and prediction models, and EARLI for comparison of virus-associated transcriptional programs.
+Analysis code and prepared inputs for the study **“Blood Viral RNA and Host Immune Response Mark a Divergent Pathway in Severe Pneumonia.”** Analyses use MASS for discovery, CMAISE for external evaluation of host-response patterns and prediction models, and EARLI for comparison of virus-associated transcriptional programs.
 
 ## Repository contents
 
